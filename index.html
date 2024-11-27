@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>숫자 맞추기 게임</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        
+        .game-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        .game-info {
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+        
+        input[type="number"] {
+            width: 100px;
+            padding: 0.5rem;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-right: 0.5rem;
+        }
+        
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .message {
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+        
+        .stats {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+        
+        .best-score {
+            color: #2196F3;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>숫자 맞추기 게임</h1>
+        <div class="game-info">
+            1부터 100 사이의 숫자를 맞춰보세요!
+        </div>
+        <div>
+            <input type="number" id="guessInput" min="1" max="100">
+            <button onclick="makeGuess()">확인</button>
+        </div>
+        <div class="message" id="message"></div>
+        <div class="stats">
+            <div>시도 횟수: <span id="attempts">0</span></div>
+            <div>최고 기록: <span id="bestScore" class="best-score">-</span></div>
+        </div>
+    </div>
+
+    <script>
+        let targetNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+        let bestScore = Infinity;
+        
+        function makeGuess() {
+            const guessInput = document.getElementById('guessInput');
+            const guess = parseInt(guessInput.value);
+            const messageElement = document.getElementById('message');
+            
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                messageElement.textContent = '1부터 100 사이의 숫자를 입력해주세요!';
+                messageElement.style.backgroundColor = '#ffebee';
+                return;
+            }
+            
+            attempts++;
+            document.getElementById('attempts').textContent = attempts;
+            
+            if (guess === targetNumber) {
+                messageElement.textContent = '정답입니다! 🎉';
+                messageElement.style.backgroundColor = '#e8f5e9';
+                if (attempts < bestScore) {
+                    bestScore = attempts;
+                    document.getElementById('bestScore').textContent = bestScore;
+                }
+                // 게임 재시작 준비
+                setTimeout(() => {
+                    if (confirm('새 게임을 시작하시겠습니까?')) {
+                        resetGame();
+                    }
+                }, 1000);
+            } else if (guess < targetNumber) {
+                messageElement.textContent = '더 큰 숫자입니다!';
+                messageElement.style.backgroundColor = '#fff3e0';
+            } else {
+                messageElement.textContent = '더 작은 숫자입니다!';
+                messageElement.style.backgroundColor = '#fff3e0';
+            }
+            
+            guessInput.value = '';
+            guessInput.focus();
+        }
+        
+        function resetGame() {
+            targetNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            document.getElementById('attempts').textContent = attempts;
+            document.getElementById('message').textContent = '';
+            document.getElementById('message').style.backgroundColor = 'transparent';
+            document.getElementById('guessInput').value = '';
+        }
+        
+        // Enter 키로 확인하기
+        document.getElementById('guessInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                makeGuess();
+            }
+        });
+    </script>
+</body>
+</html>
